@@ -3,13 +3,11 @@ using System.Collections.Generic;
 
 namespace JobBoard.API.Models;
 
-public partial class Company
+public partial class Category
 {
     public long Id { get; set; }
 
-    public string CompanyName { get; set; } = null!;
-
-    public string CompanyDescription { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
     public bool? IsActive { get; set; }
 
@@ -19,9 +17,5 @@ public partial class Company
 
     public DateTime? DateDeleted { get; set; }
 
-    public virtual User IdNavigation { get; set; } = null!;
-
     public virtual ICollection<Job> Jobs { get; set; } = new List<Job>();
-
-    public virtual ICollection<Location> Locations { get; set; } = new List<Location>();
 }

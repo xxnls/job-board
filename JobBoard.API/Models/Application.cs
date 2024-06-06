@@ -1,19 +1,29 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-namespace JobBoard.API.Models
+namespace JobBoard.API.Models;
+
+public partial class Application
 {
-    [Table("Applications")]
-    public class Application : BaseModel
-    {
-        public int PersonId { get; set; }
-        public int SubmittedResumeId { get; set; }
-        public int JobId { get; set; }
+    public long Id { get; set; }
 
-        [ForeignKey("PersonId")]
-        public Person Person { get; set; }
-        [ForeignKey("SubmittedResumeId")]
-        public Resume SubmittedResume { get; set; }
-        [ForeignKey("JobId")]
-        public Job Job { get; set; }
-    }
+    public long PersonId { get; set; }
+
+    public long JobId { get; set; }
+
+    public long SubmittedResumeId { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public DateTime? DateCreated { get; set; }
+
+    public DateTime? DateModified { get; set; }
+
+    public DateTime? DateDeleted { get; set; }
+
+    public virtual Job Job { get; set; } = null!;
+
+    public virtual Person Person { get; set; } = null!;
+
+    public virtual Resume SubmittedResume { get; set; } = null!;
 }

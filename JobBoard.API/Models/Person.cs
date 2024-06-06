@@ -1,31 +1,33 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-namespace JobBoard.API.Models
+namespace JobBoard.API.Models;
+
+public partial class Person
 {
-    public enum Gender
-    {
-        Male,
-        Female,
-        Other
-    }
+    public long Id { get; set; }
 
-    [Table("People")]
-    public class Person : User
-    {
-        [Required]
-        public string FirstName { get; set; }
-        [Required]
-        public string LastName { get; set; }
-        [Required]
-        public Gender Gender { get; set; }
-        public long ResumeId { get; set; }
-        public long LocationId { get; set; }
+    public string FirstName { get; set; } = null!;
 
-        [ForeignKey("ResumeId")]
-        public Resume Resume { get; set; }
-        [ForeignKey("LocationId")]
-        public Location Location { get; set; }
-        public ICollection<Application> Applications { get; set; }
-    }
+    public string LastName { get; set; } = null!;
+
+    public string Gender { get; set; } = null!;
+
+    public long LocationId { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public DateTime? DateCreated { get; set; }
+
+    public DateTime? DateModified { get; set; }
+
+    public DateTime? DateDeleted { get; set; }
+
+    public virtual ICollection<Application> Applications { get; set; } = new List<Application>();
+
+    public virtual User IdNavigation { get; set; } = null!;
+
+    public virtual Location Location { get; set; } = null!;
+
+    public virtual Resume? Resume { get; set; }
 }

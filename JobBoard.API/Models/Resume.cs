@@ -1,12 +1,25 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-namespace JobBoard.API.Models
+namespace JobBoard.API.Models;
+
+public partial class Resume
 {
-    [Table("Resumes")]
-    public class Resume : BaseModel
-    {
-        [Required] 
-        public string FilePath { get; set; }
-    }
+    public long Id { get; set; }
+
+    public string FilePath { get; set; } = null!;
+
+    public long PersonId { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public DateTime? DateCreated { get; set; }
+
+    public DateTime? DateModified { get; set; }
+
+    public DateTime? DateDeleted { get; set; }
+
+    public virtual Application? Application { get; set; }
+
+    public virtual Person Person { get; set; } = null!;
 }

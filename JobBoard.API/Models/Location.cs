@@ -1,21 +1,33 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
-namespace JobBoard.API.Models
+namespace JobBoard.API.Models;
+
+public partial class Location
 {
-    [Table("Locations")]
-    public class Location : BaseModel
-    {
-        [Required]
-        public string Country { get; set; }
-        [Required]
-        public string Region { get; set; }
-        [Required]
-        public string City { get; set; }
-        [Required]
-        public string PostalCode { get; set; }
-        [Required]
-        public string Address { get; set; }
+    public long Id { get; set; }
 
-    }
+    public string Country { get; set; } = null!;
+
+    public string Region { get; set; } = null!;
+
+    public string City { get; set; } = null!;
+
+    public string PostalCode { get; set; } = null!;
+
+    public string Address { get; set; } = null!;
+
+    public bool? IsActive { get; set; }
+
+    public DateTime? DateCreated { get; set; }
+
+    public DateTime? DateModified { get; set; }
+
+    public DateTime? DateDeleted { get; set; }
+
+    public virtual ICollection<Person> People { get; set; } = new List<Person>();
+
+    public virtual ICollection<Company> Companies { get; set; } = new List<Company>();
+
+    public virtual ICollection<Job> Jobs { get; set; } = new List<Job>();
 }
