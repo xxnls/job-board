@@ -12,7 +12,6 @@ namespace JobBoard.API.Models
         [StringLength(32, MinimumLength = 3)]
         public string Password { get; set; }
         [Required]
-        public string Country { get; set; }
         public string PhoneNumber { get; set; }
     }
 }
