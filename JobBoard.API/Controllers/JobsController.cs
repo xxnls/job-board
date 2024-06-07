@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using JobBoard.API.Data;
 using JobBoard.API.Models;
+using AutoMapper;
+using JobBoard.API.Dtos;
 
 namespace JobBoard.API.Controllers
 {
@@ -15,31 +17,50 @@ namespace JobBoard.API.Controllers
     public class JobsController : ControllerBase
     {
         private readonly JobBoardDbContext _context;
+        private readonly IMapper _mapper;  // Inject IMapper
 
-        public JobsController(JobBoardDbContext context)
+        public JobsController(JobBoardDbContext dbContext, IMapper mapper)
         {
-            _context = context;
+            _context = dbContext;
+            _mapper = mapper;
         }
 
         // GET: api/Jobs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Job>>> GetJobs()
+        public async Task<ActionResult<IEnumerable<JobDto>>> GetJobs()
         {
-            return await _context.Jobs.ToListAsync();
+            var jobs = await _context.Jobs
+                .Include(j => j.Company)
+                .Include(j => j.Categories)
+                .Include(j => j.Locations)
+                .ToListAsync();
+
+            if (jobs == null)
+            {
+                return NotFound();
+            }
+
+            var jobDtos = _mapper.Map<IEnumerable<JobDto>>(jobs);
+            return Ok(jobDtos);
         }
 
         // GET: api/Jobs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Job>> GetJob(long id)
+        public async Task<ActionResult<JobDto>> GetJob(long id)
         {
-            var job = await _context.Jobs.FindAsync(id);
+            var job = await _context.Jobs
+                .Include(j => j.Company)
+                .Include(j => j.Categories)
+                .Include(j => j.Locations)
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (job == null)
             {
                 return NotFound();
             }
 
-            return job;
+            var jobDto = _mapper.Map<JobDto>(job);
+            return Ok(jobDto);
         }
 
         // PUT: api/Jobs/5
