@@ -1,4 +1,4 @@
-﻿namespace JobBoard.API.Dtos
+﻿namespace JobBoard.Web.Dtos
 {
     public class JobDto
     {

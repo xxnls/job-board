@@ -1,0 +1,51 @@
+﻿@page "/jobs"
+@inject JobBoard.Client.Services.JobService JobService
+
+<h3>Job Listings</h3>
+
+@if (jobs == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Company</th>
+                <th>Location</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var job in jobs)
+            {
+                <tr>
+                    <td>@job.Title</td>
+                    <td>@job.CompanyName</td>
+                    <td>
+                        @foreach (var location in job.Locations)
+                        {
+                            @location
+                            <br />
+                        }
+                    </td>
+                    <td>
+                        <a href="/jobs/@job.Id" class="btn btn-primary">View Details</a>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<JobDto> jobs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        jobs = await JobService.GetJobs();
+    }
+}

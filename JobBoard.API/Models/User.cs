@@ -25,6 +25,8 @@ public partial class User
 
     public DateTime? DateDeleted { get; set; }
 
+    public string? ProfilePicturePath { get; set; }
+
     public virtual Company? Company { get; set; }
 
     public virtual Person? Person { get; set; }

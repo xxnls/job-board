@@ -1,4 +1,4 @@
-using JobBoard.API.Data;
+using JobBoard.API.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
