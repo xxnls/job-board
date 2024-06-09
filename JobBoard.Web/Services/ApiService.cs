@@ -1,4 +1,6 @@
-﻿namespace JobBoard.Web.Services
+﻿using System.Text.Json;
+
+namespace JobBoard.Web.Services
 {
     public class ApiService<T> where T : class
     {
@@ -13,7 +15,11 @@
         {
             string entityTypeName = typeof(T).Name;
 
-            //entityTypeName = entityTypeName.ToLower();
+            // Remove the "Dto" suffix
+            if (entityTypeName.EndsWith("Dto"))
+            {
+                entityTypeName = entityTypeName.Substring(0, entityTypeName.Length - 3);
+            }
 
             return $"api/{entityTypeName}s"; // Make plural
         }
@@ -27,10 +33,13 @@
         {
             return await _http.GetFromJsonAsync<T>($"{GetEndpoint()}/{id}");
         }
-        public async Task CreateEntity(T entity)
+        public async Task<HttpResponseMessage> CreateEntity(T entity)
         {
+            Console.WriteLine(GetEndpoint());
+            Console.WriteLine(JsonSerializer.Serialize(entity));
+            Console.WriteLine(entity);
             var response = await _http.PostAsJsonAsync(GetEndpoint(), entity);
-            response.EnsureSuccessStatusCode();
+            return response;
         }
     }
 }

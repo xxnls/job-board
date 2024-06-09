@@ -1,6 +1,7 @@
 using JobBoard.Web.Services;
 using JobBoard.Web.Components;
 using JobBoard.Web.Models;
+using JobBoard.Web.Dtos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,7 @@ builder.Services.AddScoped(sp => new HttpClient
 });
 
 builder.Services.AddScoped<JobService>();
-builder.Services.AddScoped<ApiService<Location>>();
+builder.Services.AddScoped<ApiService<LocationDto>>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

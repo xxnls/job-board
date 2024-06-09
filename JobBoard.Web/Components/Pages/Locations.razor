@@ -1,10 +1,12 @@
 ﻿@page "/locations"
-@inject ApiService<Location> LocationService
+@inject ApiService<LocationDto> LocationService
 @inject NavigationManager NavigationManager
 
 <h3>Location Listings</h3>
 
-<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addLocationModal">Add Location</button>
+<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addLocationModal">
+    Add Location
+</button>
 
 @if (locations == null)
 {
@@ -19,7 +21,7 @@ else
                 <th>City</th>
                 <th>State/Province</th>
                 <th>Postal Code</th>
-                <th>Actions</th>
+                <th>Address</th>
             </tr>
         </thead>
         <tbody>
@@ -30,9 +32,7 @@ else
                     <td>@location.City</td>
                     <td>@location.Region</td>
                     <td>@location.PostalCode</td>
-                    <td>
-                        @* Add edit/delete buttons or other actions here *@
-                    </td>
+                    <td>@location.Address</td>
                 </tr>
             }
         </tbody>
@@ -47,7 +47,9 @@ else
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <EditForm Model="@newLocation" OnValidSubmit="@AddLocation">
+                @* Modal Form *@
+                <EditForm Model="@newLocation" OnValidSubmit="@AddLocation" FormName="addLocationForm">
+                    @*<input type="hidden" name="formName" value="addLocationForm" />*@
                     <div class="mb-3">
                         <label for="country" class="form-label">Country:</label>
                         <InputText id="country" @bind-Value="newLocation.Country" class="form-control" />
@@ -64,6 +66,10 @@ else
                         <label for="postalCode" class="form-label">Postal Code:</label>
                         <InputText id="postalCode" @bind-Value="newLocation.PostalCode" class="form-control" />
                     </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address:</label>
+                        <InputText id="address" @bind-Value="newLocation.Address" class="form-control" />
+                    </div>
                     <button type="submit" class="btn btn-primary">Add</button>
                 </EditForm>
             </div>
@@ -72,8 +78,9 @@ else
 </div>
 
 @code {
-    private List<Location> locations;
-    private Location newLocation = new Location();
+    private List<LocationDto>? locations;
+    [SupplyParameterFromForm]
+    private LocationDto newLocation { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -82,17 +89,24 @@ else
 
     private async Task AddLocation()
     {
-        var response = await LocationService.CreateEntity(newLocation);
-        if (response.IsSuccessStatusCode)
+        try
         {
-            newLocation = new Location();
-            locations = await LocationService.GetEntities();
-            await InvokeAsync(StateHasChanged); // Refresh the component to show the new location
+            var response = await LocationService.CreateEntity(newLocation);
+            response.EnsureSuccessStatusCode(); // This will throw an exception if not successful
+
+            newLocation = new LocationDto(); // Clear the form
+            locations = await LocationService.GetEntities(); // Fetch updated data
+            await InvokeAsync(StateHasChanged); // Update the UI
         }
-        else
+        catch (HttpRequestException ex)
         {
-            // Handle error (display a message, etc.)
-            Console.Error.WriteLine("Failed to add location.");
+            // Handle specific HTTP errors, e.g., show a toast notification
+            Console.WriteLine($"HTTP Error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            // Handle other unexpected errors
+            Console.WriteLine($"Error adding location: {ex.Message}");
         }
     }
 }
