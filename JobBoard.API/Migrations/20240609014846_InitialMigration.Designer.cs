@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobBoard.API.Migrations
 {
     [DbContext(typeof(JobBoardDbContext))]
-    [Migration("20240607154636_Migration2")]
-    partial class Migration2
+    [Migration("20240609014846_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -63,7 +63,8 @@ namespace JobBoard.API.Migrations
                     IsActive = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "(getutcdate())"),
                     DateModified = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DateDeleted = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DateDeleted = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ProfilePicturePath = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -1,0 +1,98 @@
+﻿@page "/locations"
+@inject ApiService<Location> LocationService
+@inject NavigationManager NavigationManager
+
+<h3>Location Listings</h3>
+
+<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addLocationModal">Add Location</button>
+
+@if (locations == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Country</th>
+                <th>City</th>
+                <th>State/Province</th>
+                <th>Postal Code</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var location in locations)
+            {
+                <tr>
+                    <td>@location.Country</td>
+                    <td>@location.City</td>
+                    <td>@location.Region</td>
+                    <td>@location.PostalCode</td>
+                    <td>
+                        @* Add edit/delete buttons or other actions here *@
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div id="addLocationModal" class="modal fade" tabindex="-1" aria-labelledby="addLocationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addLocationModalLabel">Add Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <EditForm Model="@newLocation" OnValidSubmit="@AddLocation">
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country:</label>
+                        <InputText id="country" @bind-Value="newLocation.Country" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="city" class="form-label">City:</label>
+                        <InputText id="city" @bind-Value="newLocation.City" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="region" class="form-label">State/Province:</label>
+                        <InputText id="region" @bind-Value="newLocation.Region" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="postalCode" class="form-label">Postal Code:</label>
+                        <InputText id="postalCode" @bind-Value="newLocation.PostalCode" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Location> locations;
+    private Location newLocation = new Location();
+
+    protected override async Task OnInitializedAsync()
+    {
+        locations = await LocationService.GetEntities();
+    }
+
+    private async Task AddLocation()
+    {
+        var response = await LocationService.CreateEntity(newLocation);
+        if (response.IsSuccessStatusCode)
+        {
+            newLocation = new Location();
+            locations = await LocationService.GetEntities();
+            await InvokeAsync(StateHasChanged); // Refresh the component to show the new location
+        }
+        else
+        {
+            // Handle error (display a message, etc.)
+            Console.Error.WriteLine("Failed to add location.");
+        }
+    }
+}

@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Json;
 using JobBoard.Web.Dtos;
 
-namespace JobBoard.Client.Services
+namespace JobBoard.Web.Services
 {
     public class JobService
     {
