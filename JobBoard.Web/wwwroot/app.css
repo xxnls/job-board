@@ -20,6 +20,12 @@ a, .btn-link {
     padding-top: 1.1rem;
 }
 
+.icon-center {
+    font-size: 1.5em;
+    margin-right: 8px;
+    margin-bottom: 25px;
+}
+
 h1:focus {
     outline: none;
 }

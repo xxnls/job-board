@@ -21,6 +21,12 @@ namespace JobBoard.Web.Services
                 entityTypeName = entityTypeName.Substring(0, entityTypeName.Length - 3);
             }
 
+            // If ends with "y", replace with "ies"
+            if (entityTypeName.EndsWith("y"))
+            {
+                return $"api/{entityTypeName.Substring(0, entityTypeName.Length - 1)}ies";
+            }
+
             return $"api/{entityTypeName}s"; // Make plural
         }
 

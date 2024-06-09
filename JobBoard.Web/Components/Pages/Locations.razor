@@ -2,6 +2,7 @@
 @inject ApiService<LocationDto> LocationService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
 
 <h3>Location Listings</h3>
 
@@ -36,8 +37,8 @@ else
                     <td>@location.PostalCode</td>
                     <td>@location.Address</td>
                     <td>
-                        <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#editLocationModal">Edit</button>
-                        <button class="btn btn-sm btn-danger">Delete</button>
+                        <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#editLocationModal" @onclick="() => OnEditClick(location)">Edit</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteLocation(location)">Delete</button>
                     </td>
                 </tr>
             }
@@ -53,33 +54,31 @@ else
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <EditForm Model="@newLocation" OnValidSubmit="@AddLocation" FormName="addLocationForm">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
+                <form>
                     <div class="mb-3">
                         <label for="country" class="form-label">Country:</label>
-                        <InputText id="country" @bind-Value="newLocation.Country" class="form-control" name="Country"/>
+                        <input id="country" placeholder="Country" @bind="newLocation.Country" class="form-control" name="Country" />
                     </div>
                     <div class="mb-3">
                         <label for="city" class="form-label">City:</label>
-                        <InputText id="city" @bind-Value="newLocation.City" class="form-control" name="City"/>
+                        <input id="city" placeholder="City" @bind="newLocation.City" class="form-control" name="City" />
                     </div>
                     <div class="mb-3">
                         <label for="region" class="form-label">State/Province:</label>
-                        <InputText id="region" @bind-Value="newLocation.Region" class="form-control" name="Region"/>
+                        <input id="region" placeholder="State/Province" @bind="newLocation.Region" class="form-control" name="Region" />
                     </div>
                     <div class="mb-3">
                         <label for="postalCode" class="form-label">Postal Code:</label>
-                        <InputText id="postalCode" @bind-Value="newLocation.PostalCode" class="form-control" name="PostalCode"/>
+                        <input id="postalCode" placeholder="Postal Code" @bind="newLocation.PostalCode" class="form-control" name="PostalCode" />
                     </div>
                     <div class="mb-3">
                         <label for="address" class="form-label">Address:</label>
-                        <InputText id="address" @bind-Value="newLocation.Address" class="form-control" name="Address"/>
+                        <input id="address" placeholder="Address" @bind="newLocation.Address" class="form-control" name="Address" />
                     </div>
-                    <button type="submit" class="btn btn-primary">Add</button>
-                </EditForm>
+                    <button class="btn btn-primary" @onclick="AddLocation">Add</button>
+                </form>
             </div>
-        </div>
+            </div>
     </div>
 </div>
 
@@ -91,29 +90,29 @@ else
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <EditForm Model="@selectedLocation" OnValidSubmit="@UpdateLocation" FormName="editLocationForm">
+                <form>
                     <div class="mb-3">
                         <label for="country" class="form-label">Country:</label>
-                        <InputText id="country" @bind-Value="selectedLocation.Country" class="form-control" />
+                        <input id="country" @bind="selectedLocation.Country" class="form-control" />
                     </div>
                     <div class="mb-3">
                         <label for="city" class="form-label">City:</label>
-                        <InputText id="city" @bind-Value="selectedLocation.City" class="form-control" />
+                        <input id="city" @bind="selectedLocation.City" class="form-control" />
                     </div>
                     <div class="mb-3">
                         <label for="region" class="form-label">State/Province:</label>
-                        <InputText id="region" @bind-Value="selectedLocation.Region" class="form-control" />
+                        <input id="region" @bind="selectedLocation.Region" class="form-control" />
                     </div>
                     <div class="mb-3">
                         <label for="postalCode" class="form-label">Postal Code:</label>
-                        <InputText id="postalCode" @bind-Value="selectedLocation.PostalCode" class="form-control" />
+                        <input id="postalCode" @bind="selectedLocation.PostalCode" class="form-control" />
                     </div>
                     <div class="mb-3">
                         <label for="address" class="form-label">Address:</label>
-                        <InputText id="address" @bind-Value="selectedLocation.Address" class="form-control" />
+                        <input id="address" @bind="selectedLocation.Address" class="form-control" />
                     </div>
-                    <button type="submit" class="btn btn-primary">Update</button>
-                </EditForm>
+                    <button class="btn btn-primary" @onclick="UpdateLocation">Update</button>
+                </form>
             </div>
         </div>
     </div>
@@ -122,9 +121,9 @@ else
 @code {
     private List<LocationDto>? locations;
 
-    public LocationDto newLocation { get; set; } = new();
+    public LocationDto? newLocation { get; set; } = new();
 
-    public LocationDto selectedLocation { get; set; } = new();
+    public LocationDto? selectedLocation { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -152,6 +151,12 @@ else
         }
     }
 
+    private void OnEditClick(LocationDto location)
+    {
+        selectedLocation = location; // Assign the entire location object
+        StateHasChanged(); // Trigger a re-render of the component to update the edit modal
+    }
+
     private async Task UpdateLocation()
     {
         try
@@ -177,15 +182,8 @@ else
         if (await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete {location.City}, {location.Country}?"))
         {
             var response = await LocationService.DeleteEntity(location.Id);
-            if (response.IsSuccessStatusCode)
-            {
-                locations = await LocationService.GetEntities();
-                await InvokeAsync(StateHasChanged);
-            }
-            else
-            {
-                // Handle error
-            }
+            locations = await LocationService.GetEntities();
+            await InvokeAsync(StateHasChanged);
         }
     }
 }

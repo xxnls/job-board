@@ -1,0 +1,63 @@
+﻿@page "/register-company"
+@inject ApiService<CompanyDto> CompanyService
+@inject ApiService<UserDto> UserService
+
+<h3>Register Company</h3>
+
+<form>
+    <div class="mb-3">
+        <label for="userEmail" class="form-label">Email:</label>
+        <input type="text" id="userEmail" @bind="newCompany.IdNavigation.Email" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="userPassword" class="form-label">Password:</label>
+        <input type="password" id="userPassword" @bind="newCompany.IdNavigation.Password" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="userPhoneNumber" class="form-label">Phone Number:</label>
+        <input type="text" id="userPhoneNumber" @bind="newCompany.IdNavigation.PhoneNumber" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="companyName" class="form-label">Company Name:</label>
+        <input type="text" id="companyName" @bind="newCompany.CompanyName" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="companyDescription" class="form-label">Company Description:</label>
+        <input type="text" id="companyDescription" @bind="newCompany.CompanyDescription" class="form-control" />
+    </div>
+    <button class="btn btn-primary" @onclick="AddCompany">Register</button>
+</form>
+
+@code {
+
+    private CompanyDto newCompany = new CompanyDto() { IdNavigation = new UserDto() }; // Initialize the newCompany and newCompany.IdNavigation objects
+
+    private async Task AddCompany()
+    {
+        try
+        {
+            // Username = 6 random letters, 3 random numbers
+            newCompany.IdNavigation.UserName = $"{Guid.NewGuid().ToString().Substring(0, 6)}{new Random().Next(100, 999)}";
+
+            // Hash password
+            newCompany.IdNavigation.Password = BCrypt.Net.BCrypt.HashPassword(newCompany.IdNavigation.Password);
+
+            // User type = company
+            newCompany.IdNavigation.UserType = "Company";
+
+            var response = await CompanyService.CreateEntity(newCompany); // Combined API call
+            response.EnsureSuccessStatusCode();
+
+            // Clear the form
+            newCompany = new CompanyDto() { IdNavigation = new UserDto() };
+
+            // (Optional) Handle successful registration
+            // You might redirect to a login page or display a success message here.
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error registering company: {ex.Message}");
+            // Handle the error (e.g., display an error message to the user)
+        }
+    }
+}

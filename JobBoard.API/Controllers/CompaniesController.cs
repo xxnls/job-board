@@ -27,7 +27,7 @@ namespace JobBoard.API.Controllers
 
         // GET: api/Companies
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompanies()
+        public async Task<ActionResult<IEnumerable<Company>>> GetCompanies()
         {
             var companies = await _context.Companies
                 .Include(c => c.Locations)
@@ -40,14 +40,14 @@ namespace JobBoard.API.Controllers
                 return NotFound();
             }
 
-            var companiesDto = _mapper.Map<IEnumerable<CompanyDto>>(companies);
+            var companiesDto = _mapper.Map<IEnumerable<Company>>(companies);
 
             return Ok(companiesDto);
         }
 
         // GET: api/Companies/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CompanyDto>> GetCompany(long id)
+        public async Task<ActionResult<Company>> GetCompany(long id)
         {
             var company = await _context.Companies
                 .Include(c => c.Locations)
@@ -60,7 +60,7 @@ namespace JobBoard.API.Controllers
                 return NotFound();
             }
 
-            var companyDto = _mapper.Map<CompanyDto>(company);
+            var companyDto = _mapper.Map<Company>(company);
             return Ok(companyDto);
         }
 

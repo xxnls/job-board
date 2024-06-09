@@ -11,10 +11,6 @@ namespace JobBoard.API.Dtos
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company.CompanyName))
                 .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.Categories.Select(jc => jc.Name)))
                 .ForMember(dest => dest.Locations, opt => opt.MapFrom(src => src.Locations.Select(l => $"{l.City}, {l.Country}")));
-
-            CreateMap<Company, CompanyDto>()
-                .ForMember(dest => dest.Locations, opt => opt.MapFrom(src => src.Locations.Select(l => $"{l.City}, {l.Country}")))
-                .ForMember(dest => dest.Jobs, opt => opt.MapFrom(src => src.Jobs));
         }
     }
 }
