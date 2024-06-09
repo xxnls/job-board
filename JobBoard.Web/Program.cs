@@ -11,10 +11,14 @@ builder.Services.AddScoped(sp => new HttpClient
 });
 
 builder.Services.AddScoped<ApiService<JobDto>>();
+builder.Services.AddScoped<ApiService<Job>>();
 builder.Services.AddScoped<ApiService<LocationDto>>();
 builder.Services.AddScoped<ApiService<LocationForPersonDto>>();
+builder.Services.AddScoped<ApiService<Location>>();
 builder.Services.AddScoped<ApiService<CategoryDto>>();
+builder.Services.AddScoped<ApiService<Category>>();
 builder.Services.AddScoped<ApiService<CompanyDto>>();
+builder.Services.AddScoped<ApiService<Company>>();
 builder.Services.AddScoped<ApiService<PersonDto>>();
 
 // Add services to the container.
