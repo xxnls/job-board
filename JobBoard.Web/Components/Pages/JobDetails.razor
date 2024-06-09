@@ -1,5 +1,8 @@
 ﻿@page "/jobs/{id:long}"
-@inject JobBoard.Web.Services.JobService JobService
+@inject ApiService<JobDto> JobService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
 
 <h3>Job Details</h3>
 
@@ -49,6 +52,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        job = await JobService.GetJobById(Id);
+        job = await JobService.GetEntityById(Id);
     }
 }

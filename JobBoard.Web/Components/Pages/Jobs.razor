@@ -1,7 +1,13 @@
 ﻿@page "/"
-@inject JobBoard.Web.Services.JobService JobService
+@inject ApiService<JobDto> JobService
+@inject NavigationManager NavigationManager;
+@rendermode InteractiveServer
 
 <h3>Job Listings</h3>
+
+<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addJobModal">
+    Add Job
+</button>
 
 @if (jobs == null)
 {
@@ -13,6 +19,7 @@ else
         <thead>
             <tr>
                 <th>Title</th>
+                <th>Categories</th>
                 <th>Company</th>
                 <th>Location</th>
                 <th>Actions</th>
@@ -23,6 +30,13 @@ else
             {
                 <tr>
                     <td>@job.Title</td>
+                    <td>
+                        @foreach (var category in job.Categories)
+                        {
+                            @category
+                            <br />
+                        }
+                    </td>
                     <td>@job.CompanyName</td>
                     <td>
                         @foreach (var location in job.Locations)
@@ -42,10 +56,11 @@ else
 }
 
 @code {
-    private List<JobDto> jobs;
+    private List<JobDto>? jobs;
+
 
     protected override async Task OnInitializedAsync()
     {
-        jobs = await JobService.GetJobs();
+        jobs = await JobService.GetEntities();
     }
 }

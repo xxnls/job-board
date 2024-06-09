@@ -27,6 +27,18 @@ namespace JobBoard.Web.Services
                 return $"api/{entityTypeName.Substring(0, entityTypeName.Length - 1)}ies";
             }
 
+            // If its a person, make it people
+            if (entityTypeName == "Person")
+            {
+                return "api/people";
+            }
+
+            // If its LocatiofForPerson, make it locations
+            if (entityTypeName == "LocationForPerson")
+            {
+                return "api/locations";
+            }
+
             return $"api/{entityTypeName}s"; // Make plural
         }
 

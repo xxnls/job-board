@@ -6,9 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using JobBoard.API.Models;
-using JobBoard.API.Dtos;
-using AutoMapper;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace JobBoard.API.Controllers
 {
@@ -17,51 +14,31 @@ namespace JobBoard.API.Controllers
     public class CompaniesController : ControllerBase
     {
         private readonly JobBoardDbContext _context;
-        private readonly IMapper _mapper;
 
-        public CompaniesController(JobBoardDbContext context, IMapper mapper)
+        public CompaniesController(JobBoardDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         // GET: api/Companies
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Company>>> GetCompanies()
         {
-            var companies = await _context.Companies
-                .Include(c => c.Locations)
-                .Include(c => c.Jobs).ThenInclude(j => j.Categories)
-                .Include(c => c.Jobs).ThenInclude(j => j.Locations)
-                .ToListAsync();
-
-            if (companies == null)
-            {
-                return NotFound();
-            }
-
-            var companiesDto = _mapper.Map<IEnumerable<Company>>(companies);
-
-            return Ok(companiesDto);
+            return await _context.Companies.ToListAsync();
         }
 
         // GET: api/Companies/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Company>> GetCompany(long id)
         {
-            var company = await _context.Companies
-                .Include(c => c.Locations)
-                .Include(c => c.Jobs).ThenInclude(j => j.Categories)
-                .Include(c => c.Jobs).ThenInclude(j=> j.Locations)
-                .FirstOrDefaultAsync(c => c.Id == id); 
+            var company = await _context.Companies.FindAsync(id);
 
             if (company == null)
             {
                 return NotFound();
             }
 
-            var companyDto = _mapper.Map<Company>(company);
-            return Ok(companyDto);
+            return company;
         }
 
         // PUT: api/Companies/5

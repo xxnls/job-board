@@ -29,8 +29,6 @@ public partial class JobBoardDbContext : DbContext
 
     public virtual DbSet<Resume> Resumes { get; set; }
 
-    public virtual DbSet<User> Users { get; set; }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=tcp:rosiek.database.windows.net,1433;Initial Catalog=JobBoardDB;Persist Security Info=False;User ID=rosiek;Password=Bartek112233;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
@@ -40,6 +38,10 @@ public partial class JobBoardDbContext : DbContext
         modelBuilder.Entity<Application>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Applicat__3214EC077FAC1F27");
+
+            entity.HasIndex(e => e.JobId, "IX_Applications_JobId");
+
+            entity.HasIndex(e => e.PersonId, "IX_Applications_PersonId");
 
             entity.HasIndex(e => e.SubmittedResumeId, "UQ__Applicat__D25436FDE2B673B8").IsUnique();
 
@@ -80,12 +82,11 @@ public partial class JobBoardDbContext : DbContext
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CompanyName).HasMaxLength(256);
             entity.Property(e => e.DateCreated).HasDefaultValueSql("(getutcdate())");
+            entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
-
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.Company)
-                .HasForeignKey<Company>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Companies__Id__628FA481");
+            entity.Property(e => e.Password).HasMaxLength(256);
+            entity.Property(e => e.PhoneNumber).HasMaxLength(32);
+            entity.Property(e => e.Username).HasMaxLength(256);
 
             entity.HasMany(d => d.Locations).WithMany(p => p.Companies)
                 .UsingEntity<Dictionary<string, object>>(
@@ -102,12 +103,15 @@ public partial class JobBoardDbContext : DbContext
                     {
                         j.HasKey("CompanyId", "LocationId").HasName("PK__CompanyL__43E8F6E5601174FD");
                         j.ToTable("CompanyLocations");
+                        j.HasIndex(new[] { "LocationId" }, "IX_CompanyLocations_LocationId");
                     });
         });
 
         modelBuilder.Entity<Job>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Jobs__3214EC07B810A348");
+
+            entity.HasIndex(e => e.CompanyId, "IX_Jobs_CompanyId");
 
             entity.Property(e => e.ContractType).HasMaxLength(16);
             entity.Property(e => e.DateCreated).HasDefaultValueSql("(getutcdate())");
@@ -136,6 +140,7 @@ public partial class JobBoardDbContext : DbContext
                     {
                         j.HasKey("JobId", "CategoryId").HasName("PK__JobCateg__A4F6036265FA1688");
                         j.ToTable("JobCategories");
+                        j.HasIndex(new[] { "CategoryId" }, "IX_JobCategories_CategoryId");
                     });
 
             entity.HasMany(d => d.Locations).WithMany(p => p.Jobs)
@@ -153,6 +158,7 @@ public partial class JobBoardDbContext : DbContext
                     {
                         j.HasKey("JobId", "LocationId").HasName("PK__JobLocat__6B197A8BC81DBA76");
                         j.ToTable("JobLocations");
+                        j.HasIndex(new[] { "LocationId" }, "IX_JobLocations_LocationId");
                     });
         });
 
@@ -172,17 +178,18 @@ public partial class JobBoardDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__People__3214EC073902FC7D");
 
+            entity.HasIndex(e => e.LocationId, "IX_People_LocationId");
+
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.DateCreated).HasDefaultValueSql("(getutcdate())");
+            entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.FirstName).HasMaxLength(256);
             entity.Property(e => e.Gender).HasMaxLength(16);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.LastName).HasMaxLength(256);
-
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.Person)
-                .HasForeignKey<Person>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__People__Id__6B24EA82");
+            entity.Property(e => e.Password).HasMaxLength(256);
+            entity.Property(e => e.PhoneNumber).HasMaxLength(32);
+            entity.Property(e => e.Username).HasMaxLength(256);
 
             entity.HasOne(d => d.Location).WithMany(p => p.People)
                 .HasForeignKey(d => d.LocationId)
@@ -203,21 +210,6 @@ public partial class JobBoardDbContext : DbContext
                 .HasForeignKey<Resume>(d => d.PersonId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Resumes__PersonI__72C60C4A");
-        });
-
-        modelBuilder.Entity<User>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Users__3214EC0715414D41");
-
-            entity.HasIndex(e => e.Email, "UQ__Users__A9D10534E0285363").IsUnique();
-
-            entity.Property(e => e.DateCreated).HasDefaultValueSql("(getutcdate())");
-            entity.Property(e => e.Email).HasMaxLength(256);
-            entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.Password).HasMaxLength(256);
-            entity.Property(e => e.PhoneNumber).HasMaxLength(32);
-            entity.Property(e => e.UserType).HasMaxLength(16);
-            entity.Property(e => e.Username).HasMaxLength(256);
         });
 
         OnModelCreatingPartial(modelBuilder);
