@@ -1,6 +1,7 @@
 ﻿@page "/locations"
 @inject ApiService<LocationDto> LocationService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 <h3>Location Listings</h3>
 
@@ -22,6 +23,7 @@ else
                 <th>State/Province</th>
                 <th>Postal Code</th>
                 <th>Address</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -33,6 +35,10 @@ else
                     <td>@location.Region</td>
                     <td>@location.PostalCode</td>
                     <td>@location.Address</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#editLocationModal">Edit</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -47,28 +53,28 @@ else
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                @* Modal Form *@
                 <EditForm Model="@newLocation" OnValidSubmit="@AddLocation" FormName="addLocationForm">
-                    @*<input type="hidden" name="formName" value="addLocationForm" />*@
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
                     <div class="mb-3">
                         <label for="country" class="form-label">Country:</label>
-                        <InputText id="country" @bind-Value="newLocation.Country" class="form-control" />
+                        <InputText id="country" @bind-Value="newLocation.Country" class="form-control" name="Country"/>
                     </div>
                     <div class="mb-3">
                         <label for="city" class="form-label">City:</label>
-                        <InputText id="city" @bind-Value="newLocation.City" class="form-control" />
+                        <InputText id="city" @bind-Value="newLocation.City" class="form-control" name="City"/>
                     </div>
                     <div class="mb-3">
                         <label for="region" class="form-label">State/Province:</label>
-                        <InputText id="region" @bind-Value="newLocation.Region" class="form-control" />
+                        <InputText id="region" @bind-Value="newLocation.Region" class="form-control" name="Region"/>
                     </div>
                     <div class="mb-3">
                         <label for="postalCode" class="form-label">Postal Code:</label>
-                        <InputText id="postalCode" @bind-Value="newLocation.PostalCode" class="form-control" />
+                        <InputText id="postalCode" @bind-Value="newLocation.PostalCode" class="form-control" name="PostalCode"/>
                     </div>
                     <div class="mb-3">
                         <label for="address" class="form-label">Address:</label>
-                        <InputText id="address" @bind-Value="newLocation.Address" class="form-control" />
+                        <InputText id="address" @bind-Value="newLocation.Address" class="form-control" name="Address"/>
                     </div>
                     <button type="submit" class="btn btn-primary">Add</button>
                 </EditForm>
@@ -77,10 +83,48 @@ else
     </div>
 </div>
 
+<div id="editLocationModal" class="modal fade" tabindex="-1" aria-labelledby="editLocationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editLocationModalLabel">Edit Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <EditForm Model="@selectedLocation" OnValidSubmit="@UpdateLocation" FormName="editLocationForm">
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country:</label>
+                        <InputText id="country" @bind-Value="selectedLocation.Country" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="city" class="form-label">City:</label>
+                        <InputText id="city" @bind-Value="selectedLocation.City" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="region" class="form-label">State/Province:</label>
+                        <InputText id="region" @bind-Value="selectedLocation.Region" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="postalCode" class="form-label">Postal Code:</label>
+                        <InputText id="postalCode" @bind-Value="selectedLocation.PostalCode" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address:</label>
+                        <InputText id="address" @bind-Value="selectedLocation.Address" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
 @code {
     private List<LocationDto>? locations;
-    [SupplyParameterFromForm]
-    private LocationDto newLocation { get; set; } = new();
+
+    public LocationDto newLocation { get; set; } = new();
+
+    public LocationDto selectedLocation { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -96,17 +140,52 @@ else
 
             newLocation = new LocationDto(); // Clear the form
             locations = await LocationService.GetEntities(); // Fetch updated data
-            await InvokeAsync(StateHasChanged); // Update the UI
+            await InvokeAsync(StateHasChanged); // Update the UI to reflect the changes
         }
         catch (HttpRequestException ex)
         {
-            // Handle specific HTTP errors, e.g., show a toast notification
             Console.WriteLine($"HTTP Error: {ex.Message}");
         }
         catch (Exception ex)
         {
-            // Handle other unexpected errors
             Console.WriteLine($"Error adding location: {ex.Message}");
+        }
+    }
+
+    private async Task UpdateLocation()
+    {
+        try
+        {
+            var response = await LocationService.UpdateEntity(selectedLocation.Id, selectedLocation);
+            response.EnsureSuccessStatusCode(); // This will throw an exception if not successful
+
+            locations = await LocationService.GetEntities(); // Fetch updated data
+            await InvokeAsync(StateHasChanged); // Update the UI to reflect the changes
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"HTTP Error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error editing location: {ex.Message}");
+        }
+    }
+
+    private async Task DeleteLocation(LocationDto location)
+    {
+        if (await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete {location.City}, {location.Country}?"))
+        {
+            var response = await LocationService.DeleteEntity(location.Id);
+            if (response.IsSuccessStatusCode)
+            {
+                locations = await LocationService.GetEntities();
+                await InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                // Handle error
+            }
         }
     }
 }

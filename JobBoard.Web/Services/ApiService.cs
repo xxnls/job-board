@@ -41,5 +41,19 @@ namespace JobBoard.Web.Services
             var response = await _http.PostAsJsonAsync(GetEndpoint(), entity);
             return response;
         }
+        public async Task<HttpResponseMessage> UpdateEntity(int id, T entity)
+        {
+            Console.WriteLine(GetEndpoint());
+            Console.WriteLine(JsonSerializer.Serialize(entity));
+            Console.WriteLine(entity);
+            var response = await _http.PutAsJsonAsync($"{GetEndpoint()}/{id}", entity);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeleteEntity(int id)
+        {
+            var response = await _http.DeleteAsync($"{GetEndpoint()}/{id}");
+            return response;
+        }
     }
 }
