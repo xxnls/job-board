@@ -10,16 +10,7 @@ builder.Services.AddScoped(sp => new HttpClient
     BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"])
 });
 
-builder.Services.AddScoped<ApiService<JobDto>>();
-builder.Services.AddScoped<ApiService<Job>>();
-builder.Services.AddScoped<ApiService<LocationDto>>();
-builder.Services.AddScoped<ApiService<LocationForPersonDto>>();
-builder.Services.AddScoped<ApiService<Location>>();
-builder.Services.AddScoped<ApiService<CategoryDto>>();
-builder.Services.AddScoped<ApiService<Category>>();
-builder.Services.AddScoped<ApiService<CompanyDto>>();
-builder.Services.AddScoped<ApiService<Company>>();
-builder.Services.AddScoped<ApiService<PersonDto>>();
+builder.Services.AddScoped(typeof(ApiService<>));
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

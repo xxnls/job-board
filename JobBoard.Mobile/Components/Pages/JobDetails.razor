@@ -1,0 +1,56 @@
+﻿@page "/jobs/{id:long}"
+@inject ApiService<JobDto> JobService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<h3>Job Details</h3>
+
+@if (job == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="card">
+        <div class="card-header">
+            <h4>@job.Title</h4>
+        </div>
+        <div class="card-body">
+            <p><b>Company:</b> @job.CompanyName</p>
+            <p><b>Salary:</b> @job.Salary</p>
+            <p><b>Contract Type:</b> @job.ContractType</p>
+            <p><b>Work Model:</b> @job.WorkModel</p>
+            <p><b>Description:</b> @job.Description</p>
+
+            <h5>Categories:</h5>
+            <ul>
+                @foreach (var category in job.Categories)
+                {
+                    <li>@category</li>
+                }
+            </ul>
+
+            <h5>Locations:</h5>
+            <ul>
+                @foreach (var location in job.Locations)
+                {
+                    <li>@location</li>
+                }
+            </ul>
+
+            <button class="btn btn-primary">Apply Now</button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public long Id { get; set; }
+
+    private JobDto job;
+
+    protected override async Task OnInitializedAsync()
+    {
+        job = await JobService.GetEntityById(Id);
+    }
+}

@@ -1,0 +1,90 @@
+﻿@page "/register-person"
+@inject ApiService<PersonDto> PersonService
+@inject ApiService<LocationForPersonDto> LocationService
+@inject NavigationManager NavigationManager;
+
+<h3>Register Person</h3>
+
+@if (locations == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+<form>
+    <div class="mb-3">
+        <label for="firstName" class="form-label">First Name:</label>
+        <input type="text" id="firstName" @bind="newPerson.FirstName" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="lastName" class="form-label">Last Name:</label>
+        <input type="text" id="lastName" @bind="newPerson.LastName" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email:</label>
+        <input type="text" id="email" @bind="newPerson.Email" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password:</label>
+        <input type="password" id="password" @bind="newPerson.Password" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="phoneNumber" class="form-label">Phone Number:</label>
+        <input type="text" id="phoneNumber" @bind="newPerson.PhoneNumber" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="gender" class="form-label">Gender:</label>
+        <select id="gender" @bind="newPerson.Gender" class="form-select">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="location" class="form-label">Location:</label>
+        <select id="location" @bind="newPerson.LocationId" class="form-select">
+            <option value="0">Select Location</option>
+            @foreach (var location in locations)
+            {
+                <option value="@location.Id">@location.City, @location.Country, @location.Address</option>
+            }
+        </select>
+    </div>
+    <button type="button" class="btn btn-primary" @onclick="AddPerson">Register</button>
+</form>
+}
+
+@code {
+
+    private PersonDto newPerson = new PersonDto();
+    private List<LocationForPersonDto>? locations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        locations = await LocationService.GetEntities();
+    }
+
+    private async Task AddPerson()
+    {
+        try
+        {
+            // Username = 6 random letters, 3 random numbers
+            newPerson.Username = $"{Guid.NewGuid().ToString().Substring(0, 6)}{new Random().Next(100, 999)}";
+
+            // Hash password
+            newPerson.Password = BCrypt.Net.BCrypt.HashPassword(newPerson.Password);
+
+            newPerson.Location = locations.FirstOrDefault(l => l.Id == newPerson.LocationId);
+
+            var response = await PersonService.CreateEntity(newPerson);
+            response.EnsureSuccessStatusCode();
+
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error registering person: {ex.Message}");
+        }
+    }
+}

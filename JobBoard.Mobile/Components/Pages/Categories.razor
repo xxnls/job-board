@@ -1,0 +1,147 @@
+﻿@page "/categories"
+@inject ApiService<CategoryDto> CategoryService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<h3>Category Listings</h3>
+
+<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+    Add Category
+</button>
+
+@if (categories == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in categories)
+            {
+                <tr>
+                    <td>@category.Name</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#editCategoryModal" @onclick="() => OnEditClick(category)">Edit</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteCategory(category)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div id="addCategoryModal" class="modal fade" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategoryModalLabel">Add Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name:</label>
+                        <input type="text" id="name" @bind="newCategory.Name" class="form-control" />
+                    </div>
+                    <button class="btn btn-primary" @onclick="AddCategory">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="editCategoryModal" class="modal fade" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" @bind="selectedCategory.Id" />
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name:</label>
+                        <input type="text" id="name" @bind="selectedCategory.Name" class="form-control" />
+                    </div>
+                    <button class="btn btn-primary" @onclick="UpdateCategory">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<CategoryDto>? categories;
+    public CategoryDto? newCategory { get; set; } = new();
+    public CategoryDto? selectedCategory { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await CategoryService.GetEntities();
+    }
+
+    private void OnEditClick(CategoryDto category)
+    {
+        selectedCategory = category;
+        StateHasChanged();
+    }
+
+    private async Task AddCategory()
+    {
+        try
+        {
+            var response = await CategoryService.CreateEntity(newCategory);
+            response.EnsureSuccessStatusCode();
+
+            newCategory = new CategoryDto();
+            categories = await CategoryService.GetEntities();
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"HTTP Error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding category: {ex.Message}");
+        }
+    }
+
+    private async Task UpdateCategory()
+    {
+        try
+        {
+            var response = await CategoryService.UpdateEntity(selectedCategory.Id, selectedCategory);
+            response.EnsureSuccessStatusCode();
+
+            categories = await CategoryService.GetEntities();
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"HTTP Error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating category: {ex.Message}");
+        }
+    }
+
+    private async Task DeleteCategory(CategoryDto category)
+    {
+        if (await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete {category.Name}?"))
+        {
+            var response = await CategoryService.DeleteEntity(category.Id);
+            categories = await CategoryService.GetEntities();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+}
