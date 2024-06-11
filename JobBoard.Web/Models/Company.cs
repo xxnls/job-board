@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace JobBoard.Web.Models;
+﻿namespace JobBoard.Web.Models;
 
 public partial class Company
 {

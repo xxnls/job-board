@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace JobBoard.API.Models;
+﻿namespace JobBoard.API.Models;
 
 public partial class Person
 {

@@ -1,7 +1,5 @@
 using JobBoard.Web.Services;
 using JobBoard.Web.Components;
-using JobBoard.Web.Models;
-using JobBoard.Web.Dtos;
 
 var builder = WebApplication.CreateBuilder(args);
 

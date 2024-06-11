@@ -1,6 +1,5 @@
 ﻿using JobBoard.API.Models;
 using JobBoard.API.Dtos;
-using Microsoft.IdentityModel.Tokens;
 
 namespace JobBoard.API.Business
 {

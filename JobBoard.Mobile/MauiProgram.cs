@@ -1,8 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using JobBoard.Mobile.Services;
-using JobBoard.Mobile.Components;
-using JobBoard.Mobile.Models;
-using JobBoard.Mobile.Dtos;
 
 namespace JobBoard.Mobile
 {

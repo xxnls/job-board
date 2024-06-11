@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace JobBoard.API.Models;
 
@@ -7,12 +6,16 @@ public partial class Job
 {
     public long Id { get; set; }
 
+    [Required]
     public string Title { get; set; } = null!;
 
+    [Required]
     public string Description { get; set; } = null!;
 
+    [Required]
     public string WorkModel { get; set; } = null!;
 
+    [Required]
     public string ContractType { get; set; } = null!;
 
     public decimal? Salary { get; set; }

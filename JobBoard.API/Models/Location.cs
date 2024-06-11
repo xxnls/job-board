@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace JobBoard.API.Models;
 
@@ -7,14 +6,19 @@ public partial class Location
 {
     public long Id { get; set; }
 
+    [Required]
     public string Country { get; set; } = null!;
 
+    [Required]
     public string Region { get; set; } = null!;
 
+    [Required]
     public string City { get; set; } = null!;
 
+    [Required]
     public string PostalCode { get; set; } = null!;
 
+    [Required]
     public string Address { get; set; } = null!;
 
     public bool? IsActive { get; set; }

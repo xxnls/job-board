@@ -3,31 +3,35 @@
 @inject NavigationManager NavigationManager;
 @rendermode InteractiveServer
 
-<h3>Register Company</h3>
-
-<form>
-    <div class="mb-3">
-        <label for="userEmail" class="form-label">Email:</label>
-        <input type="text" id="userEmail" @bind="newCompany.Email" class="form-control" />
+<div class="grid">
+    <div class="col-md-6 m-auto">
+        <h3>Register Company</h3>
+        <form>
+            <div class="mb-3">
+                <label for="userEmail" class="form-label">Email:</label>
+                <input type="text" id="userEmail" @bind="newCompany.Email" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="userPassword" class="form-label">Password:</label>
+                <input type="password" id="userPassword" @bind="newCompany.Password" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="userPhoneNumber" class="form-label">Phone Number:</label>
+                <input type="text" id="userPhoneNumber" @bind="newCompany.PhoneNumber" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="companyName" class="form-label">Company Name:</label>
+                <input type="text" id="companyName" @bind="newCompany.CompanyName" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="companyDescription" class="form-label">Company Description:</label>
+                <input type="text" id="companyDescription" @bind="newCompany.CompanyDescription" class="form-control" />
+            </div>
+            <button class="btn btn-primary" @onclick="AddCompany">Register</button>
+        </form>
     </div>
-    <div class="mb-3">
-        <label for="userPassword" class="form-label">Password:</label>
-        <input type="password" id="userPassword" @bind="newCompany.Password" class="form-control" />
-    </div>
-    <div class="mb-3">
-        <label for="userPhoneNumber" class="form-label">Phone Number:</label>
-        <input type="text" id="userPhoneNumber" @bind="newCompany.PhoneNumber" class="form-control" />
-    </div>
-    <div class="mb-3">
-        <label for="companyName" class="form-label">Company Name:</label>
-        <input type="text" id="companyName" @bind="newCompany.CompanyName" class="form-control" />
-    </div>
-    <div class="mb-3">
-        <label for="companyDescription" class="form-label">Company Description:</label>
-        <input type="text" id="companyDescription" @bind="newCompany.CompanyDescription" class="form-control" />
-    </div>
-    <button class="btn btn-primary" @onclick="AddCompany">Register</button>
-</form>
+    <div class="col-md-3"></div>
+</div>
 
 @code {
 

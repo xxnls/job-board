@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using JobBoard.API.Business;
 using JobBoard.API.Dtos;
 using JobBoard.API.Models;

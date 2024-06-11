@@ -165,13 +165,12 @@ else
         {
             //Assign the selected company, categories and locations to the new job
             newJob.Company = companies.FirstOrDefault(c => c.Id == newJob.CompanyId);
-            newJob.Company.Id = 0;
 
             var selectedLocations = locations
                 .Where(location => selectedLocationIds.Contains(location.Id))
                 .Select(location => new Location
                     {
-                        Id = 0, // Set Id to 0
+                        Id = location.Id,
                         Country = location.Country,
                         Region = location.Region,
                         City = location.City,
@@ -184,7 +183,7 @@ else
                 .Where(category => selectedCategoryIds.Contains(category.Id))
                 .Select(category => new Category
                     {
-                        Id = 0, // Set Id to 0
+                        Id = category.Id,
                         Name = category.Name
                     })
                 .ToList();
