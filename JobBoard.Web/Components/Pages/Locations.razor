@@ -10,6 +10,12 @@
     Add Location
 </button>
 
+<div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Search locations..." @bind="searchQuery" @bind:event="oninput" />
+    <button class="btn btn-primary" @onclick="SearchLocations">Search</button>
+</div>
+
+
 @if (locations == null)
 {
     <p><em>Loading...</em></p>
@@ -124,6 +130,7 @@ else
     public LocationDto? newLocation { get; set; } = new();
 
     public LocationDto? selectedLocation { get; set; } = new();
+    private string searchQuery = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -185,5 +192,11 @@ else
             locations = await LocationService.GetEntities();
             await InvokeAsync(StateHasChanged);
         }
+    }
+
+    private async Task SearchLocations()
+    {
+        Console.WriteLine(searchQuery);
+        locations = await LocationService.SearchEntities(searchQuery);
     }
 }

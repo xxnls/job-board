@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Net.Http;
+using System.Text.Json;
 
 namespace JobBoard.Web.Services
 {
@@ -71,6 +72,12 @@ namespace JobBoard.Web.Services
         public async Task<HttpResponseMessage> DeleteEntity(int id)
         {
             var response = await _http.DeleteAsync($"{GetEndpoint()}/{id}");
+            return response;
+        }
+
+        public async Task<List<T>> SearchEntities(string query)
+        {
+            var response = await _http.GetFromJsonAsync<List<T>>($"api/LocationLogic/search?query={query}");
             return response;
         }
     }
