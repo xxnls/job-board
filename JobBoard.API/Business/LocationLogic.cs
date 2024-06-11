@@ -23,14 +23,16 @@ namespace JobBoard.API.Business
                 .Where(l => l.City.ToLower().Contains(query)
                          || l.Region.ToLower().Contains(query)
                          || l.PostalCode.ToLower().Contains(query)
-                         || l.Country.ToLower().Contains(query))
+                         || l.Country.ToLower().Contains(query)
+                         || l.Address.ToLower().Contains(query))
                 .Select(l => new LocationDto
                 {
                     Id = l.Id,
                     City = l.City,
                     Region = l.Region,
                     PostalCode = l.PostalCode,
-                    Country = l.Country
+                    Country = l.Country,
+                    Address = l.Address
                 })
                 .ToList();
 

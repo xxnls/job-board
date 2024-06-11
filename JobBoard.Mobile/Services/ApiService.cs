@@ -74,5 +74,11 @@ namespace JobBoard.Mobile.Services
             var response = await _http.DeleteAsync($"{GetEndpoint()}/{id}");
             return response;
         }
+
+        public async Task<List<T>> SearchEntities(string query)
+        {
+            var response = await _http.GetFromJsonAsync<List<T>>($"api/LocationLogic/search?query={query}");
+            return response;
+        }
     }
 }
