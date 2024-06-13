@@ -4,7 +4,7 @@
 @inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 
-<h3>Job Details</h3>
+<h3 class="display-4 text-center my-2">Job Details</h3>
 
 @if (job == null)
 {
@@ -12,42 +12,51 @@
 }
 else
 {
-    <div class="card">
-        <div class="card-header">
-            <h4>@job.Title</h4>
-        </div>
-        <div class="card-body">
-            <p><b>Company:</b> @job.CompanyName</p>
-            @* If salary is null, place "not specified" *@
-            <p><b>Salary:</b>
-                @if (job.Salary == null)
+    <div class="d-flex justify-content-center"> 
+        <div class="job-card rounded-row w-50">
+            <table class="job-details-table"> 
+                <tr>
+                    <th><i class="bi bi-building"></i> Company:</th>
+                    <td>@job.CompanyName</td>
+                </tr>
+                @if (job.Salary != null)
                 {
-                    <em> Not specified</em>
+                    <tr>
+                        <th><i class="bi bi-cash-coin"></i> Salary:</th>
+                        <td>@job.Salary</td>
+                    </tr>
                 }
-                else
-                {
-                    @job.Salary
-                }
-            </p>
-
-            <p><b>Contract Type:</b> @job.ContractType</p>
-            <p><b>Work Model:</b> @job.WorkModel</p>
-            <p><b>Description:</b> @job.Description</p>
-            <b><p>Location/s:</p></b>
-            <ul>
-                @foreach (var locationName in job.LocationNames)
-                {
-                   <li>@locationName</li>
-                }
-            </ul>
-
-            <b><p>Category/ies:</p></b>
-            <ul>
-                @foreach (var categoryName in job.CategoryNames)
-                {
-                    <li>@categoryName</li>
-                }
-            </ul>
+                <tr>
+                    <th><i class="bi bi-file-earmark-text"></i> Contract Type:</th>
+                    <td>@job.ContractType</td>
+                </tr>
+                <tr>
+                    <th><i class="bi bi-laptop"></i> Work Model:</th>
+                    <td>@job.WorkModel</td>
+                </tr>
+                <tr>
+                    <th><i class="bi bi-card-text"></i> Description:</th>
+                    <td>@job.Description</td>
+                </tr>
+                <tr>
+                    <th><i class="bi bi-geo-alt"></i> Location/s:</th>
+                    <td>
+                        @foreach (var locationName in job.LocationNames)
+                        {
+                            <span>@locationName</span> <br />
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <th><i class="bi bi-bookmark-check"></i> Category/ies:</th>
+                    <td>
+                        @foreach (var categoryName in job.CategoryNames)
+                        {
+                            <span>@categoryName</span> <br />
+                        }
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 }

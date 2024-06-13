@@ -6,10 +6,10 @@
 @inject ApiService<LocationForPersonDto> LocationService
 @rendermode InteractiveServer
 
-<h3>Job Listings</h3>
+<h3 class="display-4 text-center my-2">Job Listings</h3>
 
-<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addJobModal">
-    Add Job
+<button class="btn btn-outline-primary btn-sm mb-3" data-bs-toggle="modal" data-bs-target="#addJobModal">
+    <i class="bi bi-plus-lg"></i> Add Job
 </button>
 
 @if (jobs == null || locations == null || categories == null || companies == null)
@@ -18,42 +18,36 @@
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Categories</th>
-                <th>Company</th>
-                <th>Locations</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
+    <table class="table table-hover">
         <tbody>
             @foreach (var job in jobs)
             {
-                <tr>
-                    <td>@job.Title</td>
+                <tr class="rounded-row align-middle">
+                    <td class="text-center"><i class="bi bi-tools" style="font-size: 2em;"></i></td>
+                    <td><strong>@job.Title</strong></td>
                     <td>
                         @foreach (var categoryName in job.CategoryNames)
                         {
-                            @categoryName
+                            <span>@categoryName</span>
 
                             <br />
                         }
                     </td>
-                    <td>@job.CompanyName</td>
+                    <td><span>@job.CompanyName</span></td>
                     <td>
                         @foreach (var locationName in job.LocationNames)
                         {
-                            @locationName
+                            <span>@locationName</span>
 
                             <br />
                         }
                     </td>
                     <td>
-                        <a href="/jobs/@job.Id" class="btn btn-primary">View Details</a>
-                        <button type="button" class="btn btn-danger" @onclick="() => DeleteJob(job.Id)">
-                            Delete
+                        <a href="/jobs/@job.Id" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-eye"></i> View Details
+                        </a>
+                        <button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => DeleteJob(job.Id)">
+                            <i class="bi bi-trash"></i> Delete
                         </button>
                     </td>
                 </tr>
@@ -62,7 +56,7 @@ else
     </table>
 }
 
-
+<!-- Modal for adding a job -->
 <div id="addJobModal" class="modal fade" tabindex="-1" aria-labelledby="addJobModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -137,7 +131,7 @@ else
                         </select>
                     </div>
 
-                    <button type="button" class="btn btn-primary" @onclick="AddJob">Add Job</button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" @onclick="AddJob">Add Job</button>
                 </form>
             </div>
         </div>

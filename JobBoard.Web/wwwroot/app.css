@@ -20,10 +20,77 @@ a, .btn-link {
     padding-top: 1.1rem;
 }
 
+.rounded-row > td:first-child {
+    border-top-left-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+}
+
+.rounded-row > td:last-child {
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
+table {
+    border-collapse: separate;
+    border-spacing: 0 1rem;
+    width: 100%;
+}
+
+
+.rounded-row {
+    background-color: white;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    border-radius: 1rem;
+}
+
+.display-4 {
+    font-family: 'Montserrat', sans-serif;
+    color: #007bff;
+    font-size: 2rem;
+    font-weight: 1000;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline-primary {
+    border-color: #007bff;
+    color: #007bff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+.btn-outline-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+.rounded-row > td {
+   padding: 1rem;
+   border: none;
+}
+
 .icon-center {
     font-size: 1.5em;
     margin-right: 8px;
     margin-bottom: 25px;
+}
+
+.badge-outline-info {
+    border: 1px solid #17a2b8;
+    color: #17a2b8;
+    background-color: transparent
 }
 
 h1:focus {
@@ -40,6 +107,47 @@ h1:focus {
 
 .validation-message {
     color: #e50000;
+}
+
+.job-card {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.job-details-table {
+    margin-left: 0; /* Align the table to the left */
+    width: 100%; /* Make sure the table spans the entire width */
+}
+
+    .job-details-table th {
+        text-align: left; /* Left-align the labels */
+        width: 160px; /* Optional: Set a fixed width for the label column */
+        vertical-align: top;
+    }
+
+    .job-details-table td {
+        text-align: left; /* Left-align the values */
+    }
+
+.job-title {
+    font-size: 1.5rem; /* Or adjust as needed */
+    margin-bottom: 0.5rem;
+}
+
+.compact-badge {
+    padding: 0.25em 0.4em;
+    font-size: 0.75em;
+    margin-right: 0.25em;
+}
+
+.job-card ul {
+    list-style: none; /* Remove default list item bullets */
+    padding: 0; /* Remove default padding */
+}
+
+.job-card li {
+    margin-bottom: 0.25rem;
 }
 
 .blazor-error-boundary {
