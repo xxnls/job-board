@@ -4,22 +4,21 @@
 @inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 
-<h3>Location Listings</h3>
+<h3 class="display-4 text-center my-2">Location Listings</h3>
 
 <div class="row align-items-center mb-3">
     <div class="col-md-9 text-start">
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLocationModal">
+        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addLocationModal">
             Add Location
         </button>
     </div>
     <div class="col-md-3">
         <div class="input-group">
             <input type="text" class="form-control" placeholder="Search locations..." @bind="searchQuery" @bind:event="oninput" />
-            <button class="btn btn-primary" @onclick="SearchLocations">Search</button>
+            <button class="btn btn-outline-primary btn-sm" @onclick="SearchLocations">Search</button>
         </div>
     </div>
 </div>
-
 
 @if (locations == null)
 {
@@ -27,28 +26,28 @@
 }
 else
 {
-    <table class="table">
+    <table class="table table-hover">
         <thead>
-            <tr>
-                <th>Country</th>
-                <th>City</th>
-                <th>State/Province</th>
-                <th>Postal Code</th>
-                <th>Address</th>
-                <th>Actions</th>
-            </tr>
+            <th></th>
+            <th>Country</th>
+            <th>City</th>
+            <th>State/Province</th>
+            <th>Postal Code</th>
+            <th>Address</th>
+            <th></th>
         </thead>
         <tbody>
             @foreach (var location in locations)
             {
-                <tr>
+                <tr class="rounded-row align-middle">
+                    <td class="text-center"><i class="bi bi-geo-alt-fill" style="font-size: 2em;"></i></td>
                     <td>@location.Country</td>
                     <td>@location.City</td>
                     <td>@location.Region</td>
                     <td>@location.PostalCode</td>
                     <td>@location.Address</td>
                     <td>
-                        <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#editLocationModal" @onclick="() => OnEditClick(location)">Edit</button>
+                        <button class="btn btn-sm btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#editLocationModal" @onclick="() => OnEditClick(location)">Edit</button>
                         <button class="btn btn-sm btn-danger" @onclick="() => DeleteLocation(location)">Delete</button>
                     </td>
                 </tr>
