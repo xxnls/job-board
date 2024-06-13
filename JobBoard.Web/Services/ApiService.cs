@@ -27,6 +27,32 @@ namespace JobBoard.Web.Services
                 return $"api/{entityTypeName.Substring(0, entityTypeName.Length - 1)}ies";
             }
 
+            // If its LocatiofForPerson, make it locations
+            if (entityTypeName == "PersonCreate")
+            {
+                return "api/people";
+            }
+
+            if (entityTypeName == "CompanyCreate")
+            {
+                return "api/companies";
+            }
+
+            if (entityTypeName == "JobCreate")
+            {
+                return "api/jobs";
+            }
+
+            if (entityTypeName == "CategoryForJob")
+            {
+                return "api/categories";
+            }
+
+            if (entityTypeName == "CompanyForJob")
+            {
+                return "api/companies";
+            }
+
             // If its a person, make it people
             if (entityTypeName == "Person")
             {

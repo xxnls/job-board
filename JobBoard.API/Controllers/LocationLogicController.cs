@@ -18,7 +18,7 @@ namespace JobBoard.API.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<LocationDto>>> SearchLocations([FromQuery] string query)
+        public async Task<ActionResult<IEnumerable<LocationCreateDto>>> SearchLocations([FromQuery] string query)
         {
             try
             {

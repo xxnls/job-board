@@ -1,5 +1,5 @@
 ﻿@page "/jobs/{id:long}"
-@inject ApiService<JobDto> JobService
+@inject ApiService<JobDto> JobViewService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
@@ -18,28 +18,36 @@ else
         </div>
         <div class="card-body">
             <p><b>Company:</b> @job.CompanyName</p>
-            <p><b>Salary:</b> @job.Salary</p>
+            @* If salary is null, place "not specified" *@
+            <p><b>Salary:</b>
+                @if (job.Salary == null)
+                {
+                    <em> Not specified</em>
+                }
+                else
+                {
+                    @job.Salary
+                }
+            </p>
+
             <p><b>Contract Type:</b> @job.ContractType</p>
             <p><b>Work Model:</b> @job.WorkModel</p>
             <p><b>Description:</b> @job.Description</p>
-
-            <h5>Categories:</h5>
+            <b><p>Location/s:</p></b>
             <ul>
-                @foreach (var category in job.Categories)
+                @foreach (var locationName in job.LocationNames)
                 {
-                    <li>@category</li>
+                   <li>@locationName</li>
                 }
             </ul>
 
-            <h5>Locations:</h5>
+            <b><p>Category/ies:</p></b>
             <ul>
-                @foreach (var location in job.Locations)
+                @foreach (var categoryName in job.CategoryNames)
                 {
-                    <li>@location</li>
+                    <li>@categoryName</li>
                 }
             </ul>
-
-            <button class="btn btn-primary">Apply Now</button>
         </div>
     </div>
 }
@@ -52,6 +60,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        job = await JobService.GetEntityById(Id);
+        job = await JobViewService.GetEntityById(Id);
+        if(job == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
     }
 }

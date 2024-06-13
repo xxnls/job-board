@@ -1,10 +1,9 @@
 ﻿@page "/"
-@inject ApiService<JobDto> JobService
-@inject ApiService<Job> JobToPost
-@inject ApiService<Company> CompanyService
-@inject ApiService<Category> CategoryService
-@inject ApiService<Location> LocationService
-@inject NavigationManager NavigationManager;
+@inject ApiService<JobCreateDto> JobService
+@inject ApiService<JobDto> JobViewService
+@inject ApiService<CompanyForJobDto> CompanyService
+@inject ApiService<CategoryForJobDto> CategoryService
+@inject ApiService<LocationForPersonDto> LocationService
 @rendermode InteractiveServer
 
 <h3>Job Listings</h3>
@@ -25,7 +24,7 @@ else
                 <th>Title</th>
                 <th>Categories</th>
                 <th>Company</th>
-                <th>Location</th>
+                <th>Locations</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -35,171 +34,180 @@ else
                 <tr>
                     <td>@job.Title</td>
                     <td>
-                        @foreach (var category in job.Categories)
+                        @foreach (var categoryName in job.CategoryNames)
                         {
-                            @category
+                            @categoryName
+
                             <br />
                         }
                     </td>
                     <td>@job.CompanyName</td>
                     <td>
-                        @foreach (var location in job.Locations)
+                        @foreach (var locationName in job.LocationNames)
                         {
-                            @location
+                            @locationName
+
                             <br />
                         }
                     </td>
                     <td>
                         <a href="/jobs/@job.Id" class="btn btn-primary">View Details</a>
+                        <button type="button" class="btn btn-danger" @onclick="() => DeleteJob(job.Id)">
+                            Delete
+                        </button>
                     </td>
                 </tr>
             }
-
         </tbody>
     </table>
+}
 
-    <div id="addJobModal" class="modal fade" tabindex="-1" aria-labelledby="addJobModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addJobModalLabel">Add Job</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Title:</label>
-                            <input type="text" id="title" @bind="newJob.Title" class="form-control" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description:</label>
-                            <textarea id="description" @bind="newJob.Description" class="form-control"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="workModel" class="form-label">Work Model:</label>
-                            <select id="workModel" @bind="newJob.WorkModel" class="form-select">
-                                <option value="">Select Work Model</option>
-                                <option value="On-site">On-site</option>
-                                <option value="Remote">Remote</option>
-                                <option value="Hybrid">Hybrid</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="contractType" class="form-label">Contract Type:</label>
-                            <select id="contractType" @bind="newJob.ContractType" class="form-select">
-                                <option value="">Select Contract Type</option>
-                                <option value="Permanent">Permanent</option>
-                                <option value="Temporary">Temporary</option>
-                                <option value="Contract">Contract</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="salary" class="form-label">Salary (Optional):</label>
-                            <input type="number" id="salary" @bind="newJob.Salary" class="form-control" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="company" class="form-label">Company:</label>
-                            <select id="company" @bind="newJob.CompanyId" class="form-select">
-                                @foreach (var company in companies)
-                                {
-                                    <option value="@company.Id">@company.CompanyName</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="categories" class="form-label">Categories:</label>
-                            <select id="categories" multiple class="form-select" size="5" @onchange="HandleCategorySelection">
-                                @foreach (var category in categories)
-                                {
-                                    <option value="@category.Id">@category.Name</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="locations" class="form-label">Locations:</label>
-                            <select id="locations" multiple class="form-select" size="5" @onchange="HandleLocationSelection">
-                                @foreach (var location in locations)
-                                {
-                                    <option value="@location.Id">@location.City, @location.Country</option>
-                                }
-                            </select>
-                        </div>
-                        <button class="btn btn-primary" @onclick="AddJob">Add Job</button>
-                    </form>
-                </div>
+
+<div id="addJobModal" class="modal fade" tabindex="-1" aria-labelledby="addJobModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addJobModalLabel">Add Job</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title:</label>
+                        <input type="text" id="title" @bind="newJobDto.Title" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description:</label>
+                        <textarea id="description" @bind="newJobDto.Description" class="form-control"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="workModel" class="form-label">Work Model:</label>
+                        <select id="workModel" @bind="newJobDto.WorkModel" class="form-select">
+                            @foreach (var workModelValue in Enum.GetValues(typeof(WorkModel)))
+                            {
+                                <option value="@workModelValue">@workModelValue</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="contractType" class="form-label">Contract Type:</label>
+                        <select id="contractType" @bind="newJobDto.ContractType" class="form-select">
+                            @foreach (var contractTypeValue in Enum.GetValues(typeof(ContractType)))
+                            {
+                                <option value="@contractTypeValue">@contractTypeValue</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="salary" class="form-label">Salary (Optional):</label>
+                        <input type="number" id="salary" @bind="newJobDto.Salary" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="company" class="form-label">Company:</label>
+                        <select id="company" @bind="newJobDto.CompanyId" class="form-select">
+                            @foreach (var company in companies)
+                            {
+                                <option value="@company.Id">@company.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="categories" class="form-label">Categories:</label>
+                        <select id="categories" multiple class="form-select" size="5" @onchange="HandleCategorySelection">
+                            @foreach (var category in categories)
+                            {
+                                <option value="@category.Id">@category.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="locations" class="form-label">Locations:</label>
+                        <select id="locations" multiple class="form-select" size="5" @onchange="HandleLocationSelection">
+                            @foreach (var location in locations)
+                            {
+                                <option value="@location.Id">@location.City, @location.Country</option>
+                            }
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" @onclick="AddJob">Add Job</button>
+                </form>
             </div>
         </div>
     </div>
-}
-
+</div>
 @code {
     private List<JobDto>? jobs;
-    private List<Company>? companies;
-    private List<Category>? categories;
-    private List<Location>? locations;
-    private List<long> selectedCategoryIds = new();
-    private List<long> selectedLocationIds = new();
-    private Job newJob = new Job();
+    private List<CompanyForJobDto> companies = new List<CompanyForJobDto>();
+    private List<CategoryForJobDto> categories = new List<CategoryForJobDto>();
+    private List<LocationForPersonDto> locations = new List<LocationForPersonDto>();
+    private List<int> selectedCategoryIds = new List<int>();
+    private List<int> selectedLocationIds = new List<int>();
+
+    private JobCreateDto newJobDto = new JobCreateDto();
 
     protected override async Task OnInitializedAsync()
     {
-        jobs = await JobService.GetEntities();
+        jobs = await JobViewService.GetEntities();
         companies = await CompanyService.GetEntities();
         categories = await CategoryService.GetEntities();
         locations = await LocationService.GetEntities();
     }
 
-    private void HandleCategorySelection(ChangeEventArgs e)
-    {
-        selectedCategoryIds = ((IEnumerable<string>)e.Value).Select(long.Parse).ToList();
-    }
-
     private void HandleLocationSelection(ChangeEventArgs e)
     {
-        selectedLocationIds = ((IEnumerable<string>)e.Value).Select(long.Parse).ToList();
+        selectedLocationIds = ((IEnumerable<string>)e.Value).Select(int.Parse).ToList();
+    }
+
+    private void HandleCategorySelection(ChangeEventArgs e)
+    {
+        selectedCategoryIds = ((IEnumerable<string>)e.Value).Select(int.Parse).ToList();
     }
 
     private async Task AddJob()
     {
         try
         {
-            //Assign the selected company, categories and locations to the new job
-            newJob.Company = companies.FirstOrDefault(c => c.Id == newJob.CompanyId);
+            newJobDto.LocationIds = selectedLocationIds;
+            newJobDto.CategoryIds = selectedCategoryIds;
 
-            var selectedLocations = locations
-                .Where(location => selectedLocationIds.Contains(location.Id))
-                .Select(location => new Location
-                    {
-                        Id = location.Id,
-                        Country = location.Country,
-                        Region = location.Region,
-                        City = location.City,
-                        PostalCode = location.PostalCode,
-                        Address = location.Address
-                    })
-                .ToList();
+            var response = await JobService.CreateEntity(newJobDto);
+            response.EnsureSuccessStatusCode();
 
-            var selectedCategories = categories
-                .Where(category => selectedCategoryIds.Contains(category.Id))
-                .Select(category => new Category
-                    {
-                        Id = category.Id,
-                        Name = category.Name
-                    })
-                .ToList();
+            // Clear the form and close the modal
+            newJobDto = new JobCreateDto();
+            selectedLocationIds.Clear();
+            selectedCategoryIds.Clear();
 
-            newJob.Locations = selectedLocations;
-            newJob.Categories = selectedCategories;
-
-            await JobToPost.CreateEntity(newJob);
-
-            // Refresh the page
-            jobs = await JobService.GetEntities();
-            await InvokeAsync(StateHasChanged);
+            jobs = await JobViewService.GetEntities(); // Fetch updated data
+            await InvokeAsync(StateHasChanged); // Update the UI to reflect the changes
         }
         catch (Exception ex)
         {
-            Console.WriteLine("ERROR: " + ex.Message);
+            Console.WriteLine($"Error adding job: {ex.Message}");
+        }
+    }
+
+    private async Task DeleteJob(int jobId)
+    {
+        try
+        {
+            var response = await JobService.DeleteEntity(jobId);
+            response.EnsureSuccessStatusCode();
+
+            jobs = await JobViewService.GetEntities(); // Fetch updated data
+            await InvokeAsync(StateHasChanged); // Update the UI to reflect the changes
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting job: {ex.Message}");
         }
     }
 }

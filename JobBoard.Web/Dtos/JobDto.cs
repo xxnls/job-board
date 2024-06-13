@@ -2,16 +2,16 @@
 {
     public class JobDto
     {
-        public long Id { get; set; }
+        public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string WorkModel { get; set; }
-        public string ContractType { get; set; }
+        public WorkModel WorkModel { get; set; }
+        public ContractType ContractType { get; set; }
         public decimal? Salary { get; set; }
+        public string CompanyName { get; set; }  // Denormalized for efficiency
 
-        // properties from related entities (but not the whole objects)
-        public string CompanyName { get; set; }
-        public IEnumerable<string> Categories { get; set; } // Names of the categories
-        public IEnumerable<string> Locations { get; set; }   // Location details (e.g., City, State)
+        // Collections for associated data
+        public List<string> CategoryNames { get; set; } = new List<string>();
+        public List<string> LocationNames { get; set; } = new List<string>();
     }
 }

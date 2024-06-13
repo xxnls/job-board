@@ -199,9 +199,25 @@ else
         }
     }
 
+    private async Task ShowAlert(string message)
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("alert", message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error invoking JS alert: {ex.Message}");
+        }
+    }
+
+
     private async Task SearchLocations()
     {
-        Console.WriteLine(searchQuery);
         locations = await LocationService.SearchEntities(searchQuery);
+        if (locations == null || !locations.Any())  // Check for null or empty list
+        {
+            await ShowAlert("No locations found.");
+        }
     }
 }

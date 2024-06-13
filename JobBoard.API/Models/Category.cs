@@ -1,18 +1,16 @@
-﻿namespace JobBoard.API.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public partial class Category
+namespace JobBoard.API.Models
 {
-    public long Id { get; set; }
+    [Table("Categories")]
+    public class Category : BaseModel
+    {
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; } = null!;
+        public string? Description { get; set; }
 
-    public string Name { get; set; } = null!;
-
-    public bool? IsActive { get; set; }
-
-    public DateTime? DateCreated { get; set; }
-
-    public DateTime? DateModified { get; set; }
-
-    public DateTime? DateDeleted { get; set; }
-
-    public virtual ICollection<Job> Jobs { get; set; } = new List<Job>();
+        public ICollection<JobCategory> JobCategories { get; set; } = new List<JobCategory>();
+    }
 }

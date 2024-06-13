@@ -1,5 +1,5 @@
 ﻿@page "/register-person"
-@inject ApiService<PersonDto> PersonService
+@inject ApiService<PersonCreateDto> PersonService
 @inject ApiService<LocationForPersonDto> LocationService
 @inject NavigationManager NavigationManager;
 
@@ -30,19 +30,6 @@ else
                 <input type="password" id="password" @bind="newPerson.Password" class="form-control" />
             </div>
             <div class="mb-3">
-                <label for="phoneNumber" class="form-label">Phone Number:</label>
-                <input type="text" id="phoneNumber" @bind="newPerson.PhoneNumber" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label for="gender" class="form-label">Gender:</label>
-                <select id="gender" @bind="newPerson.Gender" class="form-select">
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-            <div class="mb-3">
                 <label for="location" class="form-label">Location:</label>
                 <select id="location" @bind="newPerson.LocationId" class="form-select">
                     <option value="0">Select Location</option>
@@ -61,7 +48,7 @@ else
 
 @code {
 
-    private PersonDto newPerson = new PersonDto();
+    private PersonCreateDto newPerson = new PersonCreateDto();
     private List<LocationForPersonDto>? locations;
 
     protected override async Task OnInitializedAsync()
@@ -73,14 +60,6 @@ else
     {
         try
         {
-            // Username = 6 random letters, 3 random numbers
-            newPerson.Username = $"{Guid.NewGuid().ToString().Substring(0, 6)}{new Random().Next(100, 999)}";
-
-            // Hash password
-            newPerson.Password = BCrypt.Net.BCrypt.HashPassword(newPerson.Password);
-
-            newPerson.Location = locations.FirstOrDefault(l => l.Id == newPerson.LocationId);
-
             var response = await PersonService.CreateEntity(newPerson);
             response.EnsureSuccessStatusCode();
 

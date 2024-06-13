@@ -1,11 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection.Metadata;
 
-namespace JobBoard.API.Models
+namespace JobBoard.API.Dtos
 {
-    [Table("Locations")]
-    public class Location : BaseModel
+    public class LocationCreateDto : BaseModelDto
     {
         [Required]
         [MaxLength(100)]
@@ -22,8 +19,5 @@ namespace JobBoard.API.Models
         [Required]
         [MaxLength(255)]
         public string Address { get; set; } = null!;
-
-        public ICollection<JobLocation> JobLocations { get; set; } = new List<JobLocation>();
-        public ICollection<CompanyLocation> CompanyLocations { get; set; } = new List<CompanyLocation>();
     }
 }

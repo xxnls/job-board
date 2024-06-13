@@ -20,6 +20,7 @@ else
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Description</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -28,6 +29,7 @@ else
             {
                 <tr>
                     <td>@category.Name</td>
+                    <td>@category.Description</td>
                     <td>
                         <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#editCategoryModal" @onclick="() => OnEditClick(category)">Edit</button>
                         <button class="btn btn-sm btn-danger" @onclick="() => DeleteCategory(category)">Delete</button>
@@ -51,6 +53,10 @@ else
                         <label for="name" class="form-label">Name:</label>
                         <input type="text" id="name" @bind="newCategory.Name" class="form-control" />
                     </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description:</label>
+                        <input type="text" id="description" @bind="newCategory.Description" class="form-control" />
+                    </div>
                     <button class="btn btn-primary" @onclick="AddCategory">Add</button>
                 </form>
             </div>
@@ -71,6 +77,10 @@ else
                     <div class="mb-3">
                         <label for="name" class="form-label">Name:</label>
                         <input type="text" id="name" @bind="selectedCategory.Name" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description:</label>
+                        <input type="text" id="description" @bind="selectedCategory.Description" class="form-control" />
                     </div>
                     <button class="btn btn-primary" @onclick="UpdateCategory">Update</button>
                 </form>

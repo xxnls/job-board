@@ -1,40 +1,42 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JobBoard.API.Models;
-
-public partial class Job
+namespace JobBoard.API.Models
 {
-    public long Id { get; set; }
+    public enum WorkModel
+    {
+        OnSite,
+        Remote,
+        Hybrid
+    }
 
-    [Required]
-    public string Title { get; set; } = null!;
+    public enum ContractType
+    {
+        FullTime,
+        PartTime,
+        Contract,
+        Internship
+    }
 
-    [Required]
-    public string Description { get; set; } = null!;
+    [Table("Jobs")]
+    public class Job : BaseModel
+    {
+        [Required]
+        [MaxLength(100)]
+        public string Title { get; set; } = null!;
+        [Required]
+        public string Description { get; set; } = null!;
+        [Required]
+        public WorkModel WorkModel { get; set; }
+        [Required]
+        public ContractType ContractType { get; set; }
+        public decimal? Salary { get; set; }
+        public int CompanyId { get; set; }
 
-    [Required]
-    public string WorkModel { get; set; } = null!;
+        [ForeignKey("CompanyId")]
+        public Company Company { get; set; }
 
-    [Required]
-    public string ContractType { get; set; } = null!;
-
-    public decimal? Salary { get; set; }
-
-    public long CompanyId { get; set; }
-
-    public bool? IsActive { get; set; }
-
-    public DateTime? DateCreated { get; set; }
-
-    public DateTime? DateModified { get; set; }
-
-    public DateTime? DateDeleted { get; set; }
-
-    public virtual ICollection<Application>? Applications { get; set; } = new List<Application>();
-
-    public virtual Company Company { get; set; } = null!;
-
-    public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
-
-    public virtual ICollection<Location> Locations { get; set; } = new List<Location>();
+        public ICollection<JobLocation> JobLocations { get; set; } = new List<JobLocation>();
+        public ICollection<JobCategory> JobCategories { get; set; } = new List<JobCategory>();
+    }
 }

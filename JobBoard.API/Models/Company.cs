@@ -1,32 +1,24 @@
-﻿namespace JobBoard.API.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
-public partial class Company
+namespace JobBoard.API.Models
 {
-    public long Id { get; set; }
+    [Table("Companies")]
+    public class Company : BaseModel
+    {
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; } = null!;
+        [Required]
+        public string Description { get; set; } = null!;
+        public int UserId { get; set; }
 
-    public string CompanyName { get; set; } = null!;
-
-    public string CompanyDescription { get; set; } = null!;
-
-    public bool? IsActive { get; set; }
-
-    public DateTime? DateCreated { get; set; }
-
-    public DateTime? DateModified { get; set; }
-
-    public DateTime? DateDeleted { get; set; }
-
-    public string? Username { get; set; }
-
-    public string? Email { get; set; }
-
-    public string? Password { get; set; }
-
-    public string? PhoneNumber { get; set; }
-
-    public string? ProfilePicturePath { get; set; }
-
-    public virtual ICollection<Job> Jobs { get; set; } = new List<Job>();
-
-    public virtual ICollection<Location> Locations { get; set; } = new List<Location>();
+        [ForeignKey("UserId")]
+        public User User { get; set; }
+        [JsonIgnore]
+        public ICollection<Job> Jobs { get; set; } = new List<Job>();
+        [JsonIgnore]
+        public ICollection<CompanyLocation> CompanyLocations { get; set; } = new List<CompanyLocation>();
+    }
 }

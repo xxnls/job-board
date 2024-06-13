@@ -12,7 +12,7 @@ namespace JobBoard.API.Business
             _context = context;
         }
 
-        public async Task<List<LocationDto>> SearchLocationsAsync(string query)
+        public async Task<List<LocationCreateDto>> SearchLocationsAsync(string query)
         {
             // Normalize the query for case-insensitive search
             query = query.ToLower();
@@ -24,14 +24,15 @@ namespace JobBoard.API.Business
                          || l.PostalCode.ToLower().Contains(query)
                          || l.Country.ToLower().Contains(query)
                          || l.Address.ToLower().Contains(query))
-                .Select(l => new LocationDto
+                .Select(l => new LocationCreateDto
                 {
                     Id = l.Id,
                     City = l.City,
                     Region = l.Region,
                     PostalCode = l.PostalCode,
                     Country = l.Country,
-                    Address = l.Address
+                    Address = l.Address,
+                    IsActive = true
                 })
                 .ToList();
 
