@@ -12,6 +12,22 @@ a, .btn-link {
     border-color: #1861ac;
 }
 
+body{
+    background-image: url('../Data/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.nav-scrollable {
+    background-color: #1b6ec2;
+}
+
+.navbar {
+    background-color: #1b6ec2 !important;
+    border-color: #1b6ec2 !important;
+}  
+
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
@@ -50,8 +66,9 @@ table {
     color: #007bff;
     font-size: 2rem;
     font-weight: 1000;
+    color: white;
     text-transform: uppercase;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .btn-outline-primary {

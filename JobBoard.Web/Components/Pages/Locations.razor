@@ -8,14 +8,14 @@
 
 <div class="row align-items-center mb-3">
     <div class="col-md-9 text-start">
-        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addLocationModal">
-            Add Location
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addLocationModal">
+            <i class="bi bi-plus-lg"></i> Add Location
         </button>
     </div>
     <div class="col-md-3">
         <div class="input-group">
             <input type="text" class="form-control" placeholder="Search locations..." @bind="searchQuery" @bind:event="oninput" />
-            <button class="btn btn-outline-primary btn-sm" @onclick="SearchLocations">Search</button>
+            <button class="btn btn-primary btn-sm" @onclick="SearchLocations">Search</button>
         </div>
     </div>
 </div>
@@ -27,7 +27,7 @@
 else
 {
     <table class="table table-hover">
-        <thead>
+        <thead style="color: white;">
             <th></th>
             <th>Country</th>
             <th>City</th>
@@ -47,8 +47,8 @@ else
                     <td>@location.PostalCode</td>
                     <td>@location.Address</td>
                     <td>
-                        <button class="btn btn-sm btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#editLocationModal" @onclick="() => OnEditClick(location)">Edit</button>
-                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteLocation(location)">Delete</button>
+                        <button class="btn btn-sm btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#editLocationModal" @onclick="() => OnEditClick(location)">Edit</button>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteLocation(location)"><i class="bi bi-trash"></i> Delete</button>
                     </td>
                 </tr>
             }
@@ -85,7 +85,7 @@ else
                         <label for="address" class="form-label">Address:</label>
                         <input id="address" placeholder="Address" @bind="newLocation.Address" class="form-control" name="Address" />
                     </div>
-                    <button class="btn btn-primary" @onclick="AddLocation">Add</button>
+                    <button class="btn btn-outline-primary" @onclick="AddLocation">Add</button>
                 </form>
             </div>
         </div>
@@ -121,7 +121,7 @@ else
                         <label for="address" class="form-label">Address:</label>
                         <input id="address" @bind="selectedLocation.Address" class="form-control" />
                     </div>
-                    <button class="btn btn-primary" @onclick="UpdateLocation">Update</button>
+                    <button class="btn btn-outline-primary" @onclick="UpdateLocation">Update</button>
                 </form>
             </div>
         </div>
