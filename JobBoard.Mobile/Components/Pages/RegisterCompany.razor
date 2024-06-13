@@ -1,49 +1,79 @@
 ﻿@page "/register-company"
-@inject ApiService<CompanyDto> CompanyService
+@inject ApiService<CompanyCreateDto> CompanyService
+@inject ApiService<LocationForPersonDto> LocationService
 @inject NavigationManager NavigationManager;
 
-    <div class="grid">
-        <div class="col-md-6 m-auto">
-        <h3>Register Company</h3>
-            <form>
-                <div class="mb-3">
-                    <label for="userEmail" class="form-label">Email:</label>
-                    <input type="text" id="userEmail" @bind="newCompany.Email" class="form-control" />
+<h3 class="display-4 text-center my-4">Register Your Company</h3>
+
+@if (locations == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm rounded-row">
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="companyName" class="form-label">Company Name:</label>
+                                <input type="text" id="companyName" @bind="newCompany.Name" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="companyDescription" class="form-label">Company Description:</label>
+                                <textarea id="companyDescription" @bind="newCompany.Description" class="form-control"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="userEmail" class="form-label">Email:</label>
+                                <input type="email" id="userEmail" @bind="newCompany.Email" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="userPassword" class="form-label">Password:</label>
+                                <input type="password" id="userPassword" @bind="newCompany.Password" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="locations" class="form-label">Locations:</label>
+                                <select id="locations" multiple class="form-select" size="5" @onchange="HandleLocationSelection">
+                                    @foreach (var location in locations)
+                                    {
+                                        <option value="@location.Id">@location.City, @location.Country</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="text-center">
+                                <button type="button" class="btn btn-outline-primary" @onclick="AddCompany">Register</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="userPassword" class="form-label">Password:</label>
-                    <input type="password" id="userPassword" @bind="newCompany.Password" class="form-control" />
-                </div>
-                <div class="mb-3">
-                    <label for="userPhoneNumber" class="form-label">Phone Number:</label>
-                    <input type="text" id="userPhoneNumber" @bind="newCompany.PhoneNumber" class="form-control" />
-                </div>
-                <div class="mb-3">
-                    <label for="companyName" class="form-label">Company Name:</label>
-                    <input type="text" id="companyName" @bind="newCompany.CompanyName" class="form-control" />
-                </div>
-                <div class="mb-3">
-                    <label for="companyDescription" class="form-label">Company Description:</label>
-                    <input type="text" id="companyDescription" @bind="newCompany.CompanyDescription" class="form-control" />
-                </div>
-                <button class="btn btn-primary" @onclick="AddCompany">Register</button>
-            </form>
+            </div>
         </div>
     </div>
+}
 
 @code {
+    private CompanyCreateDto newCompany = new CompanyCreateDto();
+    private List<LocationForPersonDto> locations = new List<LocationForPersonDto>(); // Initialize list
+    private List<int> selectedLocationIds = new List<int>();
 
-    private CompanyDto newCompany = new CompanyDto();
+    protected override async Task OnInitializedAsync()
+    {
+        locations = await LocationService.GetEntities();
+    }
+
+    private void HandleLocationSelection(ChangeEventArgs e)
+    {
+        selectedLocationIds = ((IEnumerable<string>)e.Value).Select(int.Parse).ToList();
+    }
 
     private async Task AddCompany()
     {
         try
         {
-            // Username = 6 random letters, 3 random numbers
-            newCompany.Username = $"{Guid.NewGuid().ToString().Substring(0, 6)}{new Random().Next(100, 999)}";
-
-            // Hash password
-            newCompany.Password = BCrypt.Net.BCrypt.HashPassword(newCompany.Password);
+            newCompany.LocationIds = selectedLocationIds;
 
             var response = await CompanyService.CreateEntity(newCompany);
             response.EnsureSuccessStatusCode();
@@ -53,6 +83,7 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error registering company: {ex.Message}");
+            // Handle the error appropriately (e.g., display error message to the user)
         }
     }
 }

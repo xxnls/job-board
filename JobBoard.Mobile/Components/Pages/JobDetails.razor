@@ -1,9 +1,9 @@
 ﻿@page "/jobs/{id:long}"
-@inject ApiService<JobDto> JobService
+@inject ApiService<JobDto> JobViewService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
-<h3>Job Details</h3>
+<h3 class="display-4 text-center my-2">Job Details</h3>
 
 @if (job == null)
 {
@@ -11,34 +11,51 @@
 }
 else
 {
-    <div class="card">
-        <div class="card-header">
-            <h4>@job.Title</h4>
-        </div>
-        <div class="card-body">
-            <p><b>Company:</b> @job.CompanyName</p>
-            <p><b>Salary:</b> @job.Salary</p>
-            <p><b>Contract Type:</b> @job.ContractType</p>
-            <p><b>Work Model:</b> @job.WorkModel</p>
-            <p><b>Description:</b> @job.Description</p>
-
-            <h5>Categories:</h5>
-            <ul>
-                @foreach (var category in job.Categories)
+    <div class="d-flex justify-content-center"> 
+        <div class="job-card rounded-row w-50">
+            <table class="job-details-table"> 
+                <tr>
+                    <th><i class="bi bi-building"></i> Company:</th>
+                    <td>@job.CompanyName</td>
+                </tr>
+                @if (job.Salary != null)
                 {
-                    <li>@category</li>
+                    <tr>
+                        <th><i class="bi bi-cash-coin"></i> Salary:</th>
+                        <td>@job.Salary</td>
+                    </tr>
                 }
-            </ul>
-
-            <h5>Locations:</h5>
-            <ul>
-                @foreach (var location in job.Locations)
-                {
-                    <li>@location</li>
-                }
-            </ul>
-
-            <button class="btn btn-primary">Apply Now</button>
+                <tr>
+                    <th><i class="bi bi-file-earmark-text"></i> Contract Type:</th>
+                    <td>@job.ContractType</td>
+                </tr>
+                <tr>
+                    <th><i class="bi bi-laptop"></i> Work Model:</th>
+                    <td>@job.WorkModel</td>
+                </tr>
+                <tr>
+                    <th><i class="bi bi-card-text"></i> Description:</th>
+                    <td>@job.Description</td>
+                </tr>
+                <tr>
+                    <th><i class="bi bi-geo-alt"></i> Location/s:</th>
+                    <td>
+                        @foreach (var locationName in job.LocationNames)
+                        {
+                            <span>@locationName</span> <br />
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <th><i class="bi bi-bookmark-check"></i> Category/ies:</th>
+                    <td>
+                        @foreach (var categoryName in job.CategoryNames)
+                        {
+                            <span>@categoryName</span> <br />
+                        }
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 }
@@ -51,6 +68,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        job = await JobService.GetEntityById(Id);
+        job = await JobViewService.GetEntityById(Id);
+        if(job == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
     }
 }
